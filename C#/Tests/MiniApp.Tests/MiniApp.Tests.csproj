@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\C#\MiniApp\MiniApp.csproj" />
+    <ProjectReference Include="..\..\Src\MiniApp\MiniApp.csproj" />
   </ItemGroup>
 
 </Project>
