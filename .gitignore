@@ -1,0 +1,71 @@
+# Build Folders
+bin/
+obj/
+out/
+
+# Visual Studio files
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider IDE
+.idea/
+
+# Resharper
+*.DotSettings.user
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# NuGet
+*.nupkg
+# The packages folder can be ignored because of PackageReference
+**/packages/*
+# except build/, which is used as an MSBuild target.
+!**/packages/build/
+!**/packages/repositories.config
+
+# NuGet v3
+*.nuget.props
+*.nuget.targets
+
+# Dotnet CLI
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Entity Framework
+*.efmodel.diagram
+
+# DotCover
+*.dotCover
+
+# User-specific files
+*.user
+*.suo
+*.userprefs
+*.ide
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Logs
+*.log
+
+# Local tools
+.vscode/
+.env
+
+# JetBrains Rider
+.idea/
+*.sln.iml
