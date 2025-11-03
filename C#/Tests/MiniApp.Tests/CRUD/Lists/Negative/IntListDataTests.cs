@@ -1,4 +1,4 @@
-using MiniApp.CRUD.Lists;
+using MiniApp.CRUD.Lists.Base;
 
 namespace MiniApp.Tests.CRUD.Lists.Negative
 {

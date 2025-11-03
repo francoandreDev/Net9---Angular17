@@ -1,22 +1,49 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Globalization;
 
 namespace MiniApp.CRUD.Jsons
 {
+    /// <summary>
+    /// Provides a concrete implementation of <see cref="JsonAbstract"/>
+    /// for managing in-memory JSON data using <see cref="JsonArray"/> and <see cref="JsonObject"/>.
+    /// </summary>
     public class JsonData : JsonAbstract
     {
-        private readonly JsonArray _jsonData; //? Storage Variable
+        /// <summary>
+        /// Internal JSON array that stores all JSON objects.
+        /// </summary>
+        private readonly JsonArray _jsonData;
 
-        //? Constructor
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JsonData"/> class
+        /// with an empty <see cref="JsonArray"/>.
+        /// </summary>
         public JsonData()
         {
-            _jsonData = []; //? Same as new JsonArray(); but simplier.
+            _jsonData = []; // Equivalent to new JsonArray(), just shorter syntax
         }
+
+        /// <summary>
+        /// Gets all JSON objects stored in memory.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="JsonArray"/> containing all stored JSON objects.
+        /// </returns>
         public override JsonArray GetAll()
         {
             return _jsonData;
         }
 
+        /// <summary>
+        /// Adds a new JSON object to the in-memory collection.
+        /// </summary>
+        /// <param name="newData">The <see cref="JsonObject"/> to add.</param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="newData"/> is null.</exception>
+        /// <exception cref="JsonException">Thrown if the provided JSON data is invalid.</exception>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown if an element with the same <c>id</c> already exists.
+        /// </exception>
         public override void Add(JsonObject newData)
         {
             ArgumentNullException.ThrowIfNull(newData);
@@ -32,11 +59,26 @@ namespace MiniApp.CRUD.Jsons
             _jsonData.Add(normalized);
         }
 
+        /// <summary>
+        /// Searches for a JSON object by its <c>id</c>.
+        /// </summary>
+        /// <param name="id">The identifier of the JSON object to search for.</param>
+        /// <returns>
+        /// The <see cref="JsonObject"/> if found; otherwise, <c>null</c>.
+        /// </returns>
         public override JsonObject? SearchById(int id)
         {
             return FindById(id);
         }
 
+        /// <summary>
+        /// Updates the properties of an existing JSON object with the given <c>id</c>.
+        /// </summary>
+        /// <param name="id">The identifier of the object to update.</param>
+        /// <param name="newData">The new data to merge into the existing object.</param>
+        /// <returns>
+        /// <c>true</c> if the object was found and updated; otherwise, <c>false</c>.
+        /// </returns>
         public override bool UpdateById(int id, JsonObject newData)
         {
             if (!TryValidateAndNormalize(newData, out JsonObject normalized))
@@ -53,10 +95,8 @@ namespace MiniApp.CRUD.Jsons
                 string key = pair.Key;
                 JsonNode? value = pair.Value;
 
-                if (string.Equals(key, "id", StringComparison.OrdinalIgnoreCase))
-                    continue;
-
-                if (value is null)
+                // Skip 'id' field or null values
+                if (string.Equals(key, "id", StringComparison.OrdinalIgnoreCase) || value is null)
                     continue;
 
                 JsonNode clonedValue = value.DeepClone();
@@ -71,16 +111,31 @@ namespace MiniApp.CRUD.Jsons
             return updated;
         }
 
+        /// <summary>
+        /// Deletes the JSON object with the specified <c>id</c>.
+        /// </summary>
+        /// <param name="id">The identifier of the object to delete.</param>
+        /// <returns>
+        /// <c>true</c> if the object was found and removed; otherwise, <c>false</c>.
+        /// </returns>
         public override bool DeleteById(int id)
         {
             JsonObject? target = FindById(id);
 
-            if (target is null) return false;
+            if (target is null)
+                return false;
 
             _jsonData.Remove(target);
             return true;
         }
 
+        /// <summary>
+        /// Finds a JSON object in the collection by its <c>id</c>.
+        /// </summary>
+        /// <param name="id">The identifier to search for.</param>
+        /// <returns>
+        /// The <see cref="JsonObject"/> if found; otherwise, <c>null</c>.
+        /// </returns>
         protected override JsonObject? FindById(int id)
         {
             foreach (JsonNode? element in _jsonData)
@@ -97,24 +152,30 @@ namespace MiniApp.CRUD.Jsons
 
             return null;
         }
+
+        /// <summary>
+        /// Attempts to extract an integer <c>id</c> property from a <see cref="JsonObject"/>.
+        /// </summary>
+        /// <param name="obj">The JSON object from which to extract the ID.</param>
+        /// <param name="id">When this method returns, contains the extracted ID if successful; otherwise, 0.</param>
+        /// <returns>
+        /// <c>true</c> if an <c>id</c> property was successfully parsed; otherwise, <c>false</c>.
+        /// </returns>
         protected override bool TryGetId(JsonObject obj, out int id)
         {
             id = 0;
 
-            //? Validate existence
             if (obj is null || obj["id"] is not JsonValue idValue)
                 return false;
 
-            //? Convert to string, trimming spaces
             string? idText = idValue.ToString()?.Trim();
             if (string.IsNullOrEmpty(idText))
                 return false;
 
-            //? Parse using invariant culture
             return int.TryParse(
                 idText,
-                System.Globalization.NumberStyles.Integer,
-                System.Globalization.CultureInfo.InvariantCulture,
+                NumberStyles.Integer,
+                CultureInfo.InvariantCulture,
                 out id
             );
         }
