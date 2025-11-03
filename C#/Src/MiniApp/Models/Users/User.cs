@@ -30,8 +30,11 @@ namespace MiniApp.Models.Users
             return Id > 0
                 && !string.IsNullOrWhiteSpace(Username)
                 && !string.IsNullOrWhiteSpace(Email)
-                && Email.Contains('@');
+                && Email.Contains('@')
+                && Email.IndexOf('@') > 0                // before the at-symbol '@'
+                && Email.IndexOf('@') < Email.Length - 1; // after of at-symbol '@'
         }
+
 
         /// <summary>
         /// Returns a human-readable string representation of the user.

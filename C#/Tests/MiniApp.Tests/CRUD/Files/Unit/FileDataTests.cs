@@ -1,19 +1,46 @@
+// ***********************************************************************
+// Assembly         : MiniApp.Tests
+// Author           : francoandreDev
+// Created          : 2025-11-03
+// Description      : Unit tests for FileData CRUD operations, ensuring consistency and reliability.
+// ***********************************************************************
+
 using MiniApp.CRUD.Files;
 
 namespace MiniApp.Tests.CRUD.Files.Unit
 {
+    /// <summary>
+    /// 🧪 Unit test suite for <see cref="FileData"/> class.
+    /// Verifies correct behavior of Create, Read, Update, and Delete methods.
+    /// </summary>
     public class JsonDataTests : IDisposable
     {
         private readonly string _testFile;
         private readonly FileData _fileData;
 
+        // ===========================================================
+        #region 🔧 Constructor and Setup
+        // ===========================================================
+
+        /// <summary>
+        /// ⚙️ Initializes the test by creating a temporary file
+        /// and a new instance of <see cref="FileData"/>.
+        /// </summary>
         public JsonDataTests()
         {
-            // Creamos un archivo temporal para pruebas
             _testFile = Path.GetTempFileName();
             _fileData = new FileData(_testFile);
         }
 
+        #endregion
+
+        // ===========================================================
+        #region 🧩 CRUD Operation Tests
+        // ===========================================================
+
+        /// <summary>
+        /// 🟢 Ensures that creating a new item correctly adds it to the file.
+        /// </summary>
         [Fact]
         public async Task Create_ShouldAddNewItem()
         {
@@ -24,6 +51,9 @@ namespace MiniApp.Tests.CRUD.Files.Unit
             Assert.Equal("Item 1", all.First());
         }
 
+        /// <summary>
+        /// 🔍 Verifies that all created items can be read from the file.
+        /// </summary>
         [Fact]
         public async Task ReadAll_ShouldReturnAllItems()
         {
@@ -37,53 +67,71 @@ namespace MiniApp.Tests.CRUD.Files.Unit
             Assert.Contains("B", all);
         }
 
+        /// <summary>
+        /// ✏️ Ensures that updating an existing item modifies the correct entry.
+        /// </summary>
         [Fact]
         public async Task Update_ShouldModifyCorrectItem()
         {
             await _fileData.CreateAsync("Original");
-            await _fileData.UpdateAsync(0, "Modificado");
+            await _fileData.UpdateAsync(0, "Modified");
 
             var all = await _fileData.ReadAllAsync();
-            Assert.Equal("Modificado", all.First());
+            Assert.Equal("Modified", all.First());
         }
 
+        /// <summary>
+        /// ❌ Ensures that deleting an item removes it from the file correctly.
+        /// </summary>
         [Fact]
         public async Task Delete_ShouldRemoveCorrectItem()
         {
-            await _fileData.CreateAsync("Uno");
-            await _fileData.CreateAsync("Dos");
+            await _fileData.CreateAsync("One");
+            await _fileData.CreateAsync("Two");
 
             await _fileData.DeleteAsync(0);
 
             var all = await _fileData.ReadAllAsync();
             Assert.Single(all);
-            Assert.Equal("Dos", all.First());
+            Assert.Equal("Two", all.First());
         }
 
+        /// <summary>
+        /// 🔁 Performs a complete CRUD flow test to validate full consistency.
+        /// </summary>
         [Fact]
         public async Task CRUD_FullFlow_ShouldWorkCorrectly()
         {
-            // Create
+            // CREATE
             await _fileData.CreateAsync("1");
             await _fileData.CreateAsync("2");
             await _fileData.CreateAsync("3");
 
-            // Read
+            // READ
             var all = (await _fileData.ReadAllAsync()).ToList();
             Assert.Equal(3, all.Count);
 
-            // Update
-            await _fileData.UpdateAsync(1, "2_modificado");
+            // UPDATE
+            await _fileData.UpdateAsync(1, "2_modified");
             all = (await _fileData.ReadAllAsync()).ToList();
-            Assert.Equal("2_modificado", all[1]);
+            Assert.Equal("2_modified", all[1]);
 
-            // Delete
+            // DELETE
             await _fileData.DeleteAsync(0);
             all = (await _fileData.ReadAllAsync()).ToList();
             Assert.Equal(2, all.Count);
             Assert.DoesNotContain("1", all);
         }
 
+        #endregion
+
+        // ===========================================================
+        #region 🧹 Cleanup
+        // ===========================================================
+
+        /// <summary>
+        /// 🧽 Cleans up by deleting the temporary file after tests.
+        /// </summary>
         public void Dispose()
         {
             if (File.Exists(_testFile))
@@ -91,5 +139,7 @@ namespace MiniApp.Tests.CRUD.Files.Unit
 
             GC.SuppressFinalize(this);
         }
+
+        #endregion
     }
 }

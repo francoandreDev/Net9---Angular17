@@ -32,7 +32,7 @@ namespace MiniApp.Models.Json
         /// <remarks>
         /// The method expects the JSON object to contain <c>id</c> and <c>name</c> properties.
         /// </remarks>
-        public static JsonEntity? FromJson(JsonObject json)
+        public static JsonEntity? FromJson(JsonObject? json)
         {
             if (json is null) return null;
 

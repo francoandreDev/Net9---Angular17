@@ -21,7 +21,10 @@ namespace MiniApp.CRUD.Jsons
         /// <param name="newData">
         /// The <see cref="JsonObject"/> instance to be added.
         /// Must not be <c>null</c>.
-        /// </param>
+        /// <exception cref="ArgumentNullException">Thrown if <paramref name="newData"/> is null.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if <paramref name="newData"/> does not contain an 'id' property.</exception>
+        /// <exception cref="JsonException">Thrown if the provided JSON data is invalid.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if an element with the same <c>id</c> already exists.</exception>
         public abstract void Add(JsonObject newData);
 
         /// <summary>

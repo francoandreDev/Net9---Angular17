@@ -47,6 +47,45 @@ namespace MiniApp.Tests.CRUD.Jsons.Negative
             // Assert
             Assert.False(result);
         }
+        [Fact]
+        public void Add_ShouldThrow_WhenObjectHasNoId()
+        {
+            // Arrange
+            JsonData jsonData = new();
+            JsonObject obj = new()
+            {
+                ["name"] = "NoId"
+            };
+
+            // Act & Assert
+            Assert.Throws<InvalidOperationException>(() => jsonData.Add(obj));
+        }
+
+        [Fact]
+        public void SearchById_ShouldReturnNull_WhenJsonArrayIsEmpty()
+        {
+            // Arrange
+            JsonData jsonData = new();
+
+            // Act
+            JsonObject? found = jsonData.SearchById(1);
+
+            // Assert
+            Assert.Null(found);
+        }
+
+        [Fact]
+        public void DeleteById_ShouldReturnFalse_WhenJsonArrayIsEmpty()
+        {
+            // Arrange
+            JsonData jsonData = new();
+
+            // Act
+            bool result = jsonData.DeleteById(123);
+
+            // Assert
+            Assert.False(result);
+        }
     }
 
 }

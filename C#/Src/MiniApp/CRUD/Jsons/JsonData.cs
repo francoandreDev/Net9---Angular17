@@ -48,10 +48,17 @@ namespace MiniApp.CRUD.Jsons
         {
             ArgumentNullException.ThrowIfNull(newData);
 
+            // 🚨 Check explicitly for "id" before normalization
+            if (newData["id"] is not JsonValue)
+                throw new InvalidOperationException("The JSON object must contain an 'id' property.");
+
             if (!TryValidateAndNormalize(newData, out JsonObject normalized))
                 throw new JsonException("The JSON data is invalid.");
 
-            int id = normalized["id"]!.GetValue<int>();
+            if (normalized["id"] is not JsonValue idValue)
+                throw new InvalidOperationException("The normalized JSON object must contain an 'id' property.");
+
+            int id = idValue.GetValue<int>();
 
             if (FindById(id) is not null)
                 throw new InvalidOperationException($"An element with id={id} already exists.");

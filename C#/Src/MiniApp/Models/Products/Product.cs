@@ -1,5 +1,3 @@
-using MiniApp.Models.Products;
-
 namespace MiniApp.Models.Products
 {
     /// <summary>
